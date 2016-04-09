@@ -72,27 +72,44 @@ var main = function()
         {
             printIfDebug('Response from server received successfully! (status code 200)');
 
-            TARGETS.forEach(function(target)
+            var iterator = TARGETS[Symbol.iterator]();
+            var itr = function(target)
             {
-                printIfDebug(`Preparing to probe target ${target}`);
-
-                var components = target.split(':');
-                var host = components[0];
-                var port = components[1];
-
-                printIfDebug('Host:', host);
-                printIfDebug('Port:', port);
-
-                tcpp.probe(host, port, function(err, available)
+                if(!target.done)
                 {
-                    printIfDebug('Probe complete!');
-                    printIfDebug('Error:', err ? err : '(no protocol-related error occurred)');
-                    printIfDebug('Available:', available);
+                    target = target.value;
 
-                    if(err || !available)
-                        panic(`TARGET FAILURE! Could not access ${host}:${port}!!!`, loop(main));
-                });
-            });
+                    printIfDebug(`Preparing to probe target ${target}`);
+
+                    var components = target.split(':');
+                    var host = components[0];
+                    var port = components[1];
+
+                    printIfDebug('Host:', host);
+                    printIfDebug('Port:', port);
+
+                    tcpp.probe(host, port, function(err, available)
+                    {
+                        printIfDebug('Probe complete!');
+                        printIfDebug('Error:', err ? err : '(no protocol-related error occurred)');
+                        printIfDebug('Available:', available);
+
+                        if(err || !available)
+                            panic(`TARGET FAILURE! Could not access ${host}:${port}!!!`, loop(main));
+
+                        else
+                            itr(iterator.next());
+                    });
+                }
+
+                else
+                {
+                    printIfDebug('All clear!');
+                    loop(main)();
+                }
+            };
+
+            itr(iterator.next());
         }
 
         else
