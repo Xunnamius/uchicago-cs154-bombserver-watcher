@@ -30,7 +30,7 @@ var panic = function(msg, fn)
     printIfDebug('>> PANIC!');
     printIfDebug(`Sending text "${msg}" to #${PHONE}`);
 
-    request.post('http://textbelt.com/text', { number: PHONE, message: msg }, function(err, response, body)
+    request.post('http://textbelt.com/text', {form: { number: PHONE, message: msg }}, function(err, response, body)
     {
         printIfDebug('Textbelt send attempt:');
         printIfDebug('Error:', err ? err : '(no protocol-related error occurred)');
