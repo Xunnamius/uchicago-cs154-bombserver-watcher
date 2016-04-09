@@ -5,7 +5,7 @@ The watch.js script will periodically ping the ports and check for the proper re
 ## How To Use
 
 ```
-git clone ssh://git@git.xunn.io:1111/open-source/cs154-bombserver-watcher.git
+git clone https://git.xunn.io/open-source/cs154-bombserver-watcher.git
 cd cs154-bombserver-watcher
 npm install
 ./watch.js
