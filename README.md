@@ -1,5 +1,20 @@
 The watch.js script will periodically ping the ports and check for the proper responses. If it doesn't receive a proper response, it will alert you. If you don't turn it off but the server does not recover, it will keep alerting you. When this is the case, it'd be in your best interest to turn it off before [textbelt](http://textbelt.com/) gets angry at you. See [textbelt](http://textbelt.com/)'s limits and restrictions for more info.
 
+**requires NPM and node version 5.0+ to be installed**
+
+## How To Use
+
+```
+git clone ssh://git@git.xunn.io:1111/open-source/cs154-bombserver-watcher.git
+cd cs154-bombserver-watcher
+npm install
+./watch.js
+```
+
+After you install once, you don't have to run install again. You can just call ./watch.js and enjoy the magic.
+
+## Configuration
+
 Configuration is stored in config.json. Configuration values are:
 
   *  phone: the phone number to send messages to using [textbelt](http://textbelt.com/)
@@ -10,4 +25,4 @@ Configuration is stored in config.json. Configuration values are:
 
 That's about it. Runs on windows, mac, or linux, as long as you keep the console window open and are connected to the university network/VPN.
 
-Bernard
+By: Bernard Dickens III, UChicago
