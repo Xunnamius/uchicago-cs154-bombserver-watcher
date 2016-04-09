@@ -1,6 +1,6 @@
 {
     "phone": 5555555555,
-    "checkFrequency": 600,
+    "checkFrequency": 3600,
     "verbose": true,
     "targets": ["bomb.cs.uchicago.edu:15213", "bomb.cs.uchicago.edu:15214"],
     "scoreboard": "http://bomb.cs.uchicago.edu:15213/scoreboard"
