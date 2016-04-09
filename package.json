@@ -1,0 +1,19 @@
+{
+  "name": "rejoinder",
+  "version": "0.2.10",
+  "description": "A generator of smart, pretty, and organized output for Node/JS scripts in the terminal",
+  "repository": {
+    "type": "git",
+    "url": "https://git.xunn.io/open-source/rejoinder"
+  },
+  "author": "Xunnamius",
+  "license": "ISC",
+  "engines": {
+    "node": "^5"
+  },
+  "dependencies": {
+    "request": "^2.70.0",
+    "shush": "^1.0.0",
+    "tcp-ping": "^0.1.1"
+  }
+}
