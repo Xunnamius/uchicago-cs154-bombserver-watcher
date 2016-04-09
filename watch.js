@@ -14,7 +14,7 @@ var tcpp    = require('tcp-ping');
 var config  = shush('config.json');
 
 const PHONE      = config.phone;
-const FREQUENCY  = config.checkFrequency;
+const FREQUENCY  = config.checkFrequency * 1000;
 const VERBOSE    = config.verbose;
 const TARGETS    = config.targets;
 const SCOREBOARD = config.scoreboard;
@@ -22,7 +22,7 @@ const SCOREBOARD = config.scoreboard;
 var printIfDebug = function(...msg)
 {
     if(VERBOSE)
-        console.log(...msg);
+        console.log(new Date().toISOString().replace('T', ' ').substr(0, 19) + ':', ...msg);
 };
 
 var panic = function(msg, fn)
@@ -33,15 +33,15 @@ var panic = function(msg, fn)
     request.post('http://textbelt.com/text', { number: PHONE, message: msg }, function(err, response, body)
     {
         printIfDebug('Textbelt send attempt:');
-        printIfDebug('Error (nothing is good):', err);
-        printIfDebug('HTTP status code:', response.statusCode);
+        printIfDebug('Error:', err ? err : '(no protocol-related error occurred)');
+        printIfDebug('HTTP status code:', response ? response.statusCode : 'null');
         printIfDebug('Raw response body:', body);
 
         var bodyJSON = JSON.parse(body);
 
         printIfDebug('Response JSON:', bodyJSON);
 
-        if(!bodyJSON.success)
+        if(!(bodyJSON || bodyJSON.success))
             console.log('>> ERROR: Failed to send text via Textbelt!');
 
         fn();
@@ -52,7 +52,7 @@ var loop = function(fn)
 {
     return function()
     {
-        printIfDebug('Next check will occur in about ${FREQUENCY} seconds');
+        printIfDebug(`Next check will occur in about ${FREQUENCY/1000} seconds from now`);
         setTimeout(fn, FREQUENCY);
     };
 };
@@ -60,13 +60,13 @@ var loop = function(fn)
 var main = function()
 {
     printIfDebug('Performing project 2 check...');
-    printIfDebug('Making HTTP GET request to scoreboard @ ${SCOREBOARD}');
+    printIfDebug(`Making HTTP GET request to scoreboard @ ${SCOREBOARD}`);
 
     request(SCOREBOARD, function(err, response/*, body*/)
     {
         printIfDebug('Request made');
-        printIfDebug('Error: (nothing is good)', err);
-        printIfDebug('HTTP status code:', response.statusCode);
+        printIfDebug('Error:', err ? err : '(no protocol-related error occurred)');
+        printIfDebug('HTTP status code:', response ? response.statusCode : 'null');
 
         if(!err && response.statusCode == 200)
         {
@@ -74,7 +74,7 @@ var main = function()
 
             TARGETS.forEach(function(target)
             {
-                printIfDebug('Preparing to probe target ${target}');
+                printIfDebug(`Preparing to probe target ${target}`);
 
                 var components = target.split(':');
                 var host = components[0];
@@ -86,7 +86,7 @@ var main = function()
                 tcpp.probe(host, port, function(err, available)
                 {
                     printIfDebug('Probe complete!');
-                    printIfDebug('Error (nothing is good):', err);
+                    printIfDebug('Error:', err ? err : '(no protocol-related error occurred)');
                     printIfDebug('Available:', available);
 
                     if(err || !available)
@@ -96,7 +96,10 @@ var main = function()
         }
 
         else
-            panic(`SCOREBOARD FAILURE! Problem accessing scoreboard (HTTP ${response.statusCode})!!!`, loop(main));
+        {
+            var responseText = response ? 'HTTP ' + response.statusCode : err.toString();
+            panic(`SCOREBOARD FAILURE! Problem accessing scoreboard (${responseText})!!!`, loop(main));
+        }
     });
 };
 
