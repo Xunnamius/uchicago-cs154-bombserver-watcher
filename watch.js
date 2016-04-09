@@ -1,4 +1,4 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/nodejs --harmony
 /*jshint esnext:true */
 
 /*
