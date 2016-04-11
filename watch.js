@@ -13,11 +13,30 @@ var tcpp    = require('tcp-ping');
 
 var config  = shush('config.json');
 
-const PHONE      = config.phone;
+const TO         = config.to;
+const FROM       = config.from;
+const SUBJECT    = config.subject;
+const KEY        = config.key;
+const APIURI     = config.uri;
 const FREQUENCY  = config.checkFrequency * 1000;
 const VERBOSE    = config.verbose;
 const TARGETS    = config.targets;
 const SCOREBOARD = config.scoreboard;
+
+var payload = {
+    form: {
+        from: FROM,
+        to: TO,
+        subject: SUBJECT,
+        text: null
+    },
+    auth: {
+        user: 'api',
+        pass: KEY
+    }
+};
+
+var realWaitTime = FREQUENCY;
 
 var printIfDebug = function(...msg)
 {
@@ -27,12 +46,14 @@ var printIfDebug = function(...msg)
 
 var panic = function(msg, fn)
 {
-    printIfDebug('>> PANIC!');
-    printIfDebug(`Sending text "${msg}" to #${PHONE}`);
+    payload.form.text = msg;
 
-    request.post('http://textbelt.com/text', {form: { number: PHONE, message: msg }}, function(err, response, body)
+    printIfDebug('>> PANIC!');
+    printIfDebug('Sending email payload:', payload);
+
+    request.post(APIURI, payload, function(err, response, body)
     {
-        printIfDebug('Textbelt send attempt:');
+        printIfDebug('Mailgun send attempt:');
         printIfDebug('Error:', err ? err : '(no protocol-related error occurred)');
         printIfDebug('HTTP status code:', response ? response.statusCode : 'null');
         printIfDebug('Raw response body:', body);
@@ -42,8 +63,9 @@ var panic = function(msg, fn)
         printIfDebug('Response JSON:', bodyJSON);
 
         if(!(bodyJSON || bodyJSON.success))
-            console.log('>> ERROR: Failed to send text via Textbelt!');
+            console.log('>> ERROR: Failed to send email via Mailgun!');
 
+        realWaitTime *= 2;
         fn();
     });
 };
@@ -52,8 +74,8 @@ var loop = function(fn)
 {
     return function()
     {
-        printIfDebug(`Next check will occur in about ${FREQUENCY/1000} seconds from now`);
-        setTimeout(fn, FREQUENCY);
+        printIfDebug(`Next check will occur in about ${realWaitTime/1000} seconds from now`);
+        setTimeout(fn, realWaitTime);
     };
 };
 
@@ -105,6 +127,13 @@ var main = function()
                 else
                 {
                     printIfDebug('All clear!');
+
+                    if(realWaitTime != FREQUENCY)
+                    {
+                        printIfDebug('**Wait time reset to ${FREQUENCY} from ${realWaitTime}');
+                        realWaitTime = FREQUENCY;
+                    }
+
                     loop(main)();
                 }
             };

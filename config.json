@@ -1,6 +1,10 @@
 {
-    "phone": "5555555555",
-    "checkFrequency": 3600,
+    "to": "youremail@address.here",
+    "from": "your mailgun sandbox*.mailgun.org complete email address string here",
+    "subject": "URGENT! CS154 Project 2 Potential Server Issue!",
+    "key": "your mailgun api key here",
+    "uri": "the full and complete https api.mailgun.net/v3/???????????.mailgun.org/messages uri goes here",
+    "checkFrequency": 600,
     "verbose": true,
     "targets": ["bomb.cs.uchicago.edu:15213", "bomb.cs.uchicago.edu:15214"],
     "scoreboard": "http://bomb.cs.uchicago.edu:15213/scoreboard"
