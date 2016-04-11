@@ -22,6 +22,7 @@ const FREQUENCY  = config.checkFrequency * 1000;
 const VERBOSE    = config.verbose;
 const TARGETS    = config.targets;
 const SCOREBOARD = config.scoreboard;
+const BE_PATIENT = config.bePatient;
 
 var payload = {
     form: {
@@ -46,28 +47,42 @@ var printIfDebug = function(...msg)
 
 var panic = function(msg, fn)
 {
-    payload.form.text = msg;
-
-    printIfDebug('>> PANIC!');
-    printIfDebug('Sending email payload:', payload);
-
-    request.post(APIURI, payload, function(err, response, body)
+    var proceed = function(factor)
     {
-        printIfDebug('Mailgun send attempt:');
-        printIfDebug('Error:', err ? err : '(no protocol-related error occurred)');
-        printIfDebug('HTTP status code:', response ? response.statusCode : 'null');
-        printIfDebug('Raw response body:', body);
-
-        var bodyJSON = JSON.parse(body);
-
-        printIfDebug('Response JSON:', bodyJSON);
-
-        if(!(bodyJSON || bodyJSON.success))
-            console.log('>> ERROR: Failed to send email via Mailgun!');
-
-        realWaitTime *= 2;
+        realWaitTime *= factor;
         fn();
-    });
+    };
+
+    if(BE_PATIENT && FREQUENCY == realWaitTime)
+    {
+        printIfDebug(`>> Preparing to panic (being patient and waiting ${realWaitTime/2000} seconds first)`);
+        proceed(0.5);
+    }
+
+    else
+    {
+        payload.form.text = msg;
+
+        printIfDebug('>> PANIC!');
+        printIfDebug('Sending email payload:', payload);
+
+        request.post(APIURI, payload, function(err, response, body)
+        {
+            printIfDebug('Mailgun send attempt:');
+            printIfDebug('Error:', err ? err : '(no protocol-related error occurred)');
+            printIfDebug('HTTP status code:', response ? response.statusCode : 'null');
+            printIfDebug('Raw response body:', body);
+
+            var bodyJSON = JSON.parse(body);
+
+            printIfDebug('Response JSON:', bodyJSON);
+
+            if(!(bodyJSON || bodyJSON.success))
+                console.log('>> ERROR: Failed to send email via Mailgun!');
+
+            proceed(2);
+        });
+    }
 };
 
 var loop = function(fn)
@@ -130,7 +145,7 @@ var main = function()
 
                     if(realWaitTime != FREQUENCY)
                     {
-                        printIfDebug(`**Wait time reset to ${FREQUENCY} from ${realWaitTime}`);
+                        printIfDebug(`**Wait time reset to ${FREQUENCY/1000} from ${realWaitTime/1000}`);
                         realWaitTime = FREQUENCY;
                     }
 

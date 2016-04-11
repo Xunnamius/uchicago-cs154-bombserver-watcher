@@ -7,5 +7,6 @@
     "checkFrequency": 600,
     "verbose": true,
     "targets": ["bomb.cs.uchicago.edu:15213", "bomb.cs.uchicago.edu:15214"],
-    "scoreboard": "http://bomb.cs.uchicago.edu:15213/scoreboard"
+    "scoreboard": "http://bomb.cs.uchicago.edu:15213/scoreboard",
+    "bePatient": true
 }

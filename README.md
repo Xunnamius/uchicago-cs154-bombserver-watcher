@@ -37,6 +37,7 @@ Configuration is stored in config.json. Configuration values are:
   *  *verbose*: should we pour our soul into stdout? Defaults to true.
   *  *targets*: an array of hostname + port combos (i.e. "bomb.cs:12345") that will be pinged to check for upness. Set to empty array to disable.
   *  *scoreboard*: the complete url (+ protocol) of the scoreboard.
+  *  *bePatient*: instead of sending an email immediately, wait 0.5 * `checkFrequency` and try again. If it fails a second time, *then* panic and send an email!
 
 That's about it. Runs on windows, mac, or linux, as long as you keep the console window open and are connected to the university network/VPN.
 
