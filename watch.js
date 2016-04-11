@@ -130,7 +130,7 @@ var main = function()
 
                     if(realWaitTime != FREQUENCY)
                     {
-                        printIfDebug('**Wait time reset to ${FREQUENCY} from ${realWaitTime}');
+                        printIfDebug(`**Wait time reset to ${FREQUENCY} from ${realWaitTime}`);
                         realWaitTime = FREQUENCY;
                     }
 
