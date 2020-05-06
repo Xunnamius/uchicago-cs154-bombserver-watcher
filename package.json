@@ -4,7 +4,7 @@
   "description": "A generator of smart, pretty, and organized output for Node/JS scripts in the terminal",
   "repository": {
     "type": "git",
-    "url": "https://git.xunn.io/open-source/rejoinder"
+    "url": "https://github.com/open-source/rejoinder"
   },
   "author": "Xunnamius",
   "license": "ISC",

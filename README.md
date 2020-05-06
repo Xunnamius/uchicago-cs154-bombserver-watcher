@@ -16,7 +16,7 @@ First, configure the `config.json` file to suite your needs (see *Requirements a
 Next:
 
 ```
-git clone https://git.xunn.io/open-source/cs154-bombserver-watcher.git
+git clone https://github.com/open-source/cs154-bombserver-watcher.git
 cd cs154-bombserver-watcher
 npm install
 ./watch.js
